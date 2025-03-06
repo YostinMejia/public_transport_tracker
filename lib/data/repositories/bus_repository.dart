@@ -9,6 +9,7 @@ import 'package:public_transport_tracker/domain/models/stop_model.dart';
 class BusRepository {
   FirebaseRealtimeDatasource firebaseRealtimeDatasource;
   GeolocatorDatasource geolocatorDatasource;
+  
   BusRepository({
     required this.firebaseRealtimeDatasource,
     required this.geolocatorDatasource,
@@ -20,10 +21,7 @@ class BusRepository {
     return geolocatorDatasource.positionStream;
   }
 
-  Future<Position>  actualLocation ()async{
-    await geolocatorDatasource.checkLocationPermission();
-    return geolocatorDatasource.determinePosition();
-  }
+  Future<Position>  actualLocation ()async{return geolocatorDatasource.determinePosition();}
 
   double calculateDistance(double startLatitude,double startLongitude,double endLatitude,double endLongitude){
     return geolocatorDatasource.calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
@@ -31,9 +29,7 @@ class BusRepository {
 
   //TODO: change to a real fetch
   Future<BusModel> getBus(String id)async {
-    //TODO: change the location for the las known location for the id provided
       Position position = await  actualLocation();
-    //TODO: change the bus's stops for actual bus's stops
     Set<StopModel> stops = {
       StopModel(name: "stop1", 
       address: "cra1",

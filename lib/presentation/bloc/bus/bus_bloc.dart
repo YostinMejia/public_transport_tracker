@@ -9,7 +9,6 @@ import 'package:public_transport_tracker/domain/models/bus_model.dart';
 part 'bus_event.dart';
 part 'bus_state.dart';
 
-//Learn how should I implement a class that save the bus's stops as Set<Marker> or if should i implement a converter in the model class
 class BusBloc extends Bloc<BusEvent, BusState> {
   BusRepository busRepository;
 

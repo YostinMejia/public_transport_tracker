@@ -52,8 +52,7 @@ class BusGoogleMapWidget extends StatelessWidget {
     required this.stops,
   });
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
 
   @override
   Widget build(BuildContext context) {

@@ -21,8 +21,5 @@ final class BusLoaded extends BusState {
 
 final class BusError extends BusState {
   final String error;
-  BusError({required this.error}) {
-    print("BLOC error");
-    print(error);
-  }
+  BusError({required this.error});
 }

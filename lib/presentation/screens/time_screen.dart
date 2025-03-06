@@ -29,7 +29,6 @@ class TimeScreen extends StatefulWidget {
   State<TimeScreen> createState() => _TimeScreenState();
 }
 
-//TODO: Learn if implementing keepAlive will make the screen faster
 class _TimeScreenState extends State<TimeScreen> {
   //TODO: learn when a dispose method is called and how should I implement it usign streams
   @override
@@ -40,7 +39,7 @@ class _TimeScreenState extends State<TimeScreen> {
     print("dispose");
   }
 
-  //TODO: IMPLEMENT a dispose so it will cut the connection to the stream and then will create a new one when the widget have been rebuilt
+  //TODO: IMPLEMENT a dispose method so it will cut the connection to the stream and then will create a new one when the widget have been rebuilt
   @override
   Widget build(BuildContext context) {
 
@@ -56,7 +55,6 @@ class _TimeScreenState extends State<TimeScreen> {
         }
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            //TODO: Understand why the application stays here once i go to the map screen and then come back
             children = Center(child: CircularProgressIndicator.adaptive());
           case ConnectionState.none:
             children = Center(child: Text("Nichi "));

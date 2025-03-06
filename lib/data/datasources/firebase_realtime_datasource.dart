@@ -10,5 +10,4 @@ class FirebaseRealtimeDatasource {
     _busPositions.add(location);
   }
 
-  // Create an stream method that receive updates and also another method which other classes can listen to;
 }

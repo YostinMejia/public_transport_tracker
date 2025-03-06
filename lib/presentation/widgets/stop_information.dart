@@ -4,7 +4,7 @@ import 'package:public_transport_tracker/domain/models/stop_model.dart';
 class StopInformation extends StatelessWidget {
   final StopModel stop;
   final double distance;
-  StopInformation({super.key, required this.stop, required this.distance});
+  const StopInformation({super.key, required this.stop, required this.distance});
 
   @override
   Widget build(BuildContext context) {
