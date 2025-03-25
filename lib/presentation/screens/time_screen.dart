@@ -8,21 +8,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:public_transport_tracker/domain/models/stop_model.dart';
-import 'package:public_transport_tracker/presentation/bloc/bus/bus_bloc.dart';
-import 'package:public_transport_tracker/presentation/widgets/stop_information.dart';
+import 'package:public_transport_tracker/presentation/widgets/bus_stop_information.dart';
 
 class TimeScreen extends StatefulWidget {
   final Set<StopModel> stops;
   final Stream<Position> positionStream;
   final Position actualPosition;
+  final double Function(
+    double startLatitude,
+    double startLongitude,
+    double endLatitude,
+    double endLongitude,
+  )
+  calculateDistance;
+
   const TimeScreen({
     super.key,
     required this.stops,
     required this.positionStream,
     required this.actualPosition,
+    required this.calculateDistance,
   });
 
   @override
@@ -35,17 +42,13 @@ class _TimeScreenState extends State<TimeScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    //Close conecction with broadccast
-    print("dispose");
   }
 
-  //TODO: IMPLEMENT a dispose method so it will cut the connection to the stream and then will create a new one when the widget have been rebuilt
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder(
       stream: widget.positionStream,
-      
+
       initialData: widget.actualPosition,
       builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
         Widget children;
@@ -60,17 +63,18 @@ class _TimeScreenState extends State<TimeScreen> {
             children = Center(child: Text("Nichi "));
           case ConnectionState.active:
             children = ListView(
-              children: widget.stops.map((stop){
-                 return StopInformation(
-              stop: stop,
-              distance: context.read<BusBloc>().busRepository.calculateDistance(
-                stop.position.latitude,
-                stop.position.longitude,
-                snapshot.data!.latitude,
-                snapshot.data!.longitude,
-              ),
-            );
-              }).toList(),
+              children:
+                  widget.stops.map((stop) {
+                    return BusStopInformation(
+                      stop: stop,
+                      distance: widget.calculateDistance(
+                        stop.position.latitude,
+                        stop.position.longitude,
+                        snapshot.data!.latitude,
+                        snapshot.data!.longitude,
+                      ),
+                    );
+                  }).toList(),
             );
           case ConnectionState.done:
             children = Center(child: Text("Done"));

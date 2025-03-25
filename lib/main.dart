@@ -1,18 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:public_transport_tracker/data/datasources/firebase_realtime_datasource.dart';
+import 'package:public_transport_tracker/data/datasources/firebase_auth_datasource.dart';
+import 'package:public_transport_tracker/data/datasources/firebasefirestore_datasource.dart';
 import 'package:public_transport_tracker/data/datasources/geolocator_datasource.dart';
+import 'package:public_transport_tracker/data/repositories/auth_repository.dart';
 import 'package:public_transport_tracker/data/repositories/permission_handler_repository.dart';
+import 'package:public_transport_tracker/firebase_options.dart';
+import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
 import 'package:public_transport_tracker/presentation/bloc/bus/bus_bloc.dart';
 import 'package:public_transport_tracker/presentation/bloc/location_permission/location_permission_bloc.dart';
-import 'package:public_transport_tracker/presentation/screens/bus_map_screen.dart';
-import 'package:public_transport_tracker/presentation/screens/time_screen.dart';
-import 'package:public_transport_tracker/presentation/widgets/fine_location_dialog.dart';
+import 'package:public_transport_tracker/presentation/screens/home.screen.dart';
+import 'package:public_transport_tracker/presentation/screens/login_screen.dart';
 
 import 'data/repositories/bus_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
+  FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
+
   runApp(const MainApp());
 }
 
@@ -24,12 +36,18 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  int _currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create:
+              (_) => AuthBloc(
+                authRepository: AuthRepository(
+                  firebaseAuthDatasource: FirebaseAuthDatasource(),
+                ),
+              )..add(StartAuthListen()),
+        ),
         BlocProvider<LocationPermissionBloc>(
           create:
               (_) =>
@@ -40,7 +58,7 @@ class _MainAppState extends State<MainApp> {
           create:
               (_) => BusBloc(
                 BusRepository(
-                  firebaseRealtimeDatasource: FirebaseRealtimeDatasource(),
+                  firebaseFirestoreDatasource: FirebaseFirestoreDatasource(),
                   geolocatorDatasource: GeolocatorDatasource(
                     LocationSettings(
                       accuracy: LocationAccuracy.high,
@@ -52,77 +70,23 @@ class _MainAppState extends State<MainApp> {
         ),
       ],
       child: MaterialApp(
-        home: Scaffold(
-          extendBodyBehindAppBar: false,
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentPage,
-            onTap:
-                (index) => {
-                  setState(() {
-                    _currentPage = index;
-                  }),
-                },
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.hourglass_top_outlined),
-                label: "Time",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.map_sharp),
-                label: "Map",
-              ),
-            ],
-          ),
-          body: HomePage(currentPage: _currentPage),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (BuildContext context, AuthState state) {
+            if (state is UserAuthenticated ||
+                state is AnonymouslyAuthenticated ||
+                state is BusAuthenticated) {
+              return HomePage();
+            } else if (state is UnAuthenticated) {
+              return LoginScreen();
+            } else if (state is ErrorSignIn) {
+              return Scaffold(
+                body: Center(child: Text("Error: ${state.error}")),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator.adaptive());
+            }
+          },
         ),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  final int currentPage;
-  const HomePage({super.key, required this.currentPage});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<LocationPermissionBloc, LocationPermissionState>(
-      listener: (context, state) {
-        if (state is FineLocationDenied || state is FineLocationDenied) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return FineLocationDialog();
-            },
-          );
-        } else {
-          context.read<BusBloc>().add(BusFetch(id: "id"));
-        }
-      },
-      child: BlocBuilder<BusBloc, BusState>(
-        builder: (context, state) {
-          if (state is BusLoaded) {
-            return widget.currentPage == 0
-                ? TimeScreen(
-                  positionStream: state.busPositionStream,
-                  stops: state.bus.stops,
-                  actualPosition: state.lastPosition,
-                )
-                : BusMapScreen(
-                  bus: state.bus,
-                  busPositionStream: state.busPositionStream,
-                );
-          } else if (state is BusError) {
-            return Center(child: Text("Error ${state.error.toString()}"));
-          } else {
-            return Center(child: CircularProgressIndicator.adaptive());
-          }
-        },
       ),
     );
   }

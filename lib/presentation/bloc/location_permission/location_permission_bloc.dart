@@ -7,16 +7,15 @@ part 'location_permission_event.dart';
 part 'location_permission_state.dart';
 
 class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermissionState> {
-  PermissionHandlerRepository permissionHandlerRepository;
+  final PermissionHandlerRepository _permissionHandlerRepository;
 
-  LocationPermissionBloc(this.permissionHandlerRepository) : super(LocationPermissionInitial()) {
+  LocationPermissionBloc(this._permissionHandlerRepository) : super(LocationPermissionInitial()) {
     on<PermissionRequest>(_requestPermission);
   }
   
   void _requestPermission(LocationPermissionEvent event, Emitter<LocationPermissionState> emit)async {
-    print("requestPermission");
     emit(LocationPermissionInitial());
-    PermissionStatus permissionStatus = await permissionHandlerRepository.locationPermission();
+    PermissionStatus permissionStatus = await _permissionHandlerRepository.locationPermission();
     if (permissionStatus.isGranted) {emit(FineLocationGranted());}
     else if (permissionStatus.isDenied) {emit(FineLocationDenied());}
     else {emit(FineLocationPermanentlyDenied());}

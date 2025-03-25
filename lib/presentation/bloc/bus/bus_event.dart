@@ -4,6 +4,7 @@ part of 'bus_bloc.dart';
 sealed class BusEvent {}
 
 class BusFetch extends BusEvent {
-  final String id;
-  BusFetch({required this.id});
+  final String email;
+  final String password;
+  BusFetch({required this.email, required this.password});
 }

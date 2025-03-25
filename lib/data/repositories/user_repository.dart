@@ -3,17 +3,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:public_transport_tracker/data/datasources/firebasefirestore_datasource.dart';
 import 'package:public_transport_tracker/data/datasources/geolocator_datasource.dart';
-import 'package:public_transport_tracker/domain/models/bus_model.dart';
 import 'package:public_transport_tracker/domain/models/position_model.dart';
 import 'package:public_transport_tracker/domain/models/stop_model.dart';
+import 'package:public_transport_tracker/domain/models/user_model.dart';
 
-class BusRepository {
+class UserRepository {
   final FirebaseFirestoreDatasource _firebaseFirestoreDatasource;
   final GeolocatorDatasource _geolocatorDatasource;
 
-  BusRepository({
+  UserRepository({
     required firebaseFirestoreDatasource,
     required geolocatorDatasource,
+    required authRepository,
   }) : _firebaseFirestoreDatasource = firebaseFirestoreDatasource,
        _geolocatorDatasource = geolocatorDatasource;
 
@@ -39,15 +40,23 @@ class BusRepository {
     );
   }
 
-  Future<BusModel?> getBusByEmail(String email) async {
+  Future<UserModel?> getBusByEmail(String email) async {
     QuerySnapshot<Map<String, dynamic>> response =
         await _firebaseFirestoreDatasource.getBusByEmail(email);
     if (response.docs.isNotEmpty) {
       print(response.docs.first.data());
     }
     return response.docs.isNotEmpty
-        ? BusModel.fromJson(response.docs.first.data())
+        ? UserModel.fromJson(response.docs.first.data())
         : null;
+  }
+
+  //TODO: implement unique email
+  Future<DocumentReference<Map<String, dynamic>>> createUser(
+    UserSignUpDTO user,
+    String authId,
+  ) async {
+    return _firebaseFirestoreDatasource.createUser(user, authId);
   }
 
   static Set<Marker> stopsToMarkers(Set<StopModel> stops) {

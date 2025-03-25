@@ -9,8 +9,8 @@ final class BusLoading extends BusState {}
 
 final class BusLoaded extends BusState {
   final BusModel bus;
-  Position lastPosition;
   final Stream<Position> busPositionStream;
+  Position lastPosition;
 
   BusLoaded({
     required this.bus,
