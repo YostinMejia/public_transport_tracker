@@ -5,29 +5,34 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:public_transport_tracker/data/repositories/bus_repository.dart';
 import 'package:public_transport_tracker/domain/models/stop_model.dart';
 
-
-class BusMapScreen extends StatefulWidget {
+class UserMapScreen extends StatefulWidget {
   final Stream<Position> busPositionStream;
-  final Set<StopModel> stops;
+  final Set<StopModel> savedStops;
 
   final Position initialPosition;
-  const BusMapScreen({
+  const UserMapScreen({
     super.key,
-    required this.stops,
+    required this.savedStops,
     required this.initialPosition,
     required this.busPositionStream,
   });
 
   @override
-  State<BusMapScreen> createState() => _MapSampleState();
+  State<UserMapScreen> createState() => _MapSampleState();
 }
 
-class _MapSampleState extends State<BusMapScreen> {
+class _MapSampleState extends State<UserMapScreen> {
+  late StreamSubscription<Position> positionStream;
 
   @override
   Widget build(BuildContext context) {
+    positionStream = widget.busPositionStream.listen((Position position) {
+      print("listening for locations updates");
+      print("Actual position: ${position.latitude}, ${position.longitude} ");
+    });
+
     return BusGoogleMapWidget(
-      stops: widget.stops,
+      stops: widget.savedStops,
       stopsToMarkers: BusRepository.stopsToMarkers,
       initUserLatitude: widget.initialPosition.latitude,
       initUserLongitude: widget.initialPosition.longitude,
@@ -63,7 +68,7 @@ class BusGoogleMapWidget extends StatelessWidget {
         target: LatLng(initUserLatitude, initUserLongitude),
         zoom: 14.4746,
       ),
-      // onTap: (location) => print("${location.latitude}, ${location.longitude}"),
+      onTap: (location) => print("${location.latitude}, ${location.longitude}"),
       onMapCreated:
           (GoogleMapController controller) => _controller.complete(controller),
     );

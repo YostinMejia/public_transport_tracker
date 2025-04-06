@@ -1,10 +1,22 @@
 {
     "configurations": [
+
         {
-            "name": "Flutter (lib\\presentation\\cubit\\bus_cubit.dart)",
-            "type": "dart",
+            "name": "Debug",
             "request": "launch",
-            "program": "lib\\presentation\\cubit\\bus_cubit.dart"
+            "type": "dart"
+        },
+        {
+            "name": "Profile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "Release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
         }
     ]
 }

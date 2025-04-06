@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:public_transport_tracker/domain/models/stop_model.dart';
 
-class StopInformation extends StatelessWidget {
+class BusStopInformation extends StatelessWidget {
   final StopModel stop;
   final double distance;
-  const StopInformation({super.key, required this.stop, required this.distance});
+  const BusStopInformation({super.key, required this.stop, required this.distance});
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
       color: const Color.fromARGB(255, 152, 188, 153),
       child: ListTile(
-        title: Text(stop.name),
+        title: Text(stop.address),
         subtitle: Text("Address: ${stop.address}\nDistance: ${distance.round()} Meters"),
         trailing: Icon(Icons.bus_alert_outlined),
         isThreeLine: true,

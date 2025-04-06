@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694633775834",
+    "project_id": "public-transport-tracker-52dd7",
+    "storage_bucket": "public-transport-tracker-52dd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694633775834:android:6510d1f7fb8400e9609be3",
+        "android_client_info": {
+          "package_name": "com.example.public_transport_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABs0pP_3uRSUqEDQf0RjphB6GR3mc9-00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

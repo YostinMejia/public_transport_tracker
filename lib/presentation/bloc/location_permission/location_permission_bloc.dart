@@ -1,24 +1,59 @@
 import 'package:bloc/bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:public_transport_tracker/data/repositories/location_repository.dart';
 import 'package:public_transport_tracker/data/repositories/permission_handler_repository.dart';
 
 part 'location_permission_event.dart';
 part 'location_permission_state.dart';
 
-class LocationPermissionBloc extends Bloc<LocationPermissionEvent, LocationPermissionState> {
-  PermissionHandlerRepository permissionHandlerRepository;
+class LocationBloc extends Bloc<LocationPermissionEvent, LocationState> {
+  final PermissionHandlerRepository _permissionHandlerRepository;
+  final LocationRepository _locationRepository;
 
-  LocationPermissionBloc(this.permissionHandlerRepository) : super(LocationPermissionInitial()) {
+  LocationBloc({
+    required permissionHandlerRepository,
+    required locationRepository,
+  }) : _locationRepository = locationRepository,
+       _permissionHandlerRepository = permissionHandlerRepository,
+       super(LocationPermissionInitial()) {
     on<PermissionRequest>(_requestPermission);
   }
-  
-  void _requestPermission(LocationPermissionEvent event, Emitter<LocationPermissionState> emit)async {
-    print("requestPermission");
-    emit(LocationPermissionInitial());
-    PermissionStatus permissionStatus = await permissionHandlerRepository.locationPermission();
-    if (permissionStatus.isGranted) {emit(FineLocationGranted());}
-    else if (permissionStatus.isDenied) {emit(FineLocationDenied());}
-    else {emit(FineLocationPermanentlyDenied());}
+
+  double calculateDistance(
+    double startLatitude,
+    double startLongitude,
+    double endLatitude,
+    double endLongitude,
+  ) {
+    return _locationRepository.calculateDistance(
+      startLatitude,
+      startLongitude,
+      endLatitude,
+      endLongitude,
+    );
+  }
+
+  void _requestPermission(LocationPermissionEvent event,Emitter<LocationState> emit,) async {
+    emit(LocationPermissionLoading());
+    PermissionStatus permissionStatus =
+        await _permissionHandlerRepository.locationPermission();
+
+    final Stream<Position> locationStream =
+        _locationRepository.locationStream();
+    final Position actualLocation = await _locationRepository.actualLocation();
+    if (permissionStatus.isGranted) {
+      emit(
+        FineLocationGranted(
+          locationStream: locationStream,
+          initialLocation: actualLocation,
+        ),
+      );
+    } else if (permissionStatus.isDenied) {
+      emit(FineLocationDenied());
+    } else {
+      emit(FineLocationPermanentlyDenied());
+    }
   }
 }
