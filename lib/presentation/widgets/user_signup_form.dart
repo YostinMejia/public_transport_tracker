@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:public_transport_tracker/domain/models/user_model.dart';
 import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
+import 'package:public_transport_tracker/presentation/validators/validators.dart';
 
 class UserSignUp extends StatefulWidget {
   const UserSignUp({super.key});
@@ -17,7 +17,8 @@ class _UserSignUpFormState extends State<UserSignUp> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -38,27 +39,43 @@ class _UserSignUpFormState extends State<UserSignUp> {
           children: [
             TextFormField(
               controller: nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
+              validator: notNullOrEmpty,
               decoration: InputDecoration(label: Text("Name")),
             ),
             TextFormField(
               controller: emailController,
               decoration: InputDecoration(label: Text("Email")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? email = emailValidator(value!);
+                return email;
+              },
             ),
             TextFormField(
               controller: passwordController,
               decoration: InputDecoration(label: Text("Password")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? password = passwordValidator(value!);
+                return password;
+              },
             ),
             TextFormField(
               controller: confirmPasswordController,
               decoration: InputDecoration(label: Text("Confirm the password")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? confirmPassword = confirmPasswordValidator(
+                  passwordController.text,
+                  value!,
+                );
+                return confirmPassword;
+              },
             ),
-        
+
             ElevatedButton(
               onPressed: () {
                 //Validates and verify all the form fields
@@ -71,6 +88,7 @@ class _UserSignUpFormState extends State<UserSignUp> {
                       ),
                     ),
                   );
+                  Navigator.pop(context);
                 }
               },
               child: Text("Submit"),

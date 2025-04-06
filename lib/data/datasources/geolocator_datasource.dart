@@ -6,7 +6,7 @@ class GeolocatorDatasource {
   LocationSettings locationSettings;
 
   GeolocatorDatasource(this.locationSettings, [this.locationPermission]);
-  //TODO: implement a dispose method in all the widgets that implements it
+  //FIXME: implement a dispose method in all the widgets that implements it
   Stream<Position> get positionStream =>Geolocator.getPositionStream(locationSettings: locationSettings);
 
   Future<Position> determinePosition() async {

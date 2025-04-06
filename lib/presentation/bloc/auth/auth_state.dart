@@ -5,24 +5,24 @@ sealed class AuthState {}
 
 final class AuthLoading extends AuthState {}
 
-final class AnonymouslyAuthenticated extends AuthState {
-  final User user;
-  AnonymouslyAuthenticated({required this.user});
-}
 
-final class UserAuthenticated extends AuthState {
+enum Rol{user, bus,anonymous}
+final class Authenticated extends AuthState {
+  final bool isAnonymous;
+  final Rol rol;
   final User user;
-  UserAuthenticated({required this.user});
-}
-
-final class BusAuthenticated extends AuthState {
-  final User bus;
-  BusAuthenticated({required this.bus});
+  Authenticated({required this.user, required this.rol, this.isAnonymous = false});
 }
 
 final class UnAuthenticated extends AuthState {}
 
-final class ErrorSignIn extends AuthState {
+final class SignInError extends AuthState {
   final String error;
-  ErrorSignIn({required this.error});
+  SignInError({required this.error});
+}
+
+
+final class SignUpError extends AuthState {
+  final String error;
+  SignUpError({required this.error});
 }

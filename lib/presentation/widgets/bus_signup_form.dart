@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:public_transport_tracker/domain/models/bus_model.dart';
 import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
+import 'package:public_transport_tracker/presentation/validators/validators.dart';
 
 class BusSignUp extends StatefulWidget {
   const BusSignUp({super.key});
@@ -56,25 +57,41 @@ class _BusFormState extends State<BusForm> {
           children: [
             TextFormField(
               controller: nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
+              validator: notNullOrEmpty,
               decoration: InputDecoration(label: Text("Name")),
             ),
             TextFormField(
               controller: emailController,
               decoration: InputDecoration(label: Text("Email")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? email = emailValidator(value!);
+                return email;
+              },
             ),
             TextFormField(
               controller: passwordController,
               decoration: InputDecoration(label: Text("Password")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? password = passwordValidator(value!);
+                return password;
+              },
             ),
             TextFormField(
               controller: confirmPasswordController,
               decoration: InputDecoration(label: Text("Confirm the password")),
+              validator: (value) {
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? confirmPassword = confirmPasswordValidator(
+                  passwordController.text,
+                  value!,
+                );
+                return confirmPassword;
+              },
             ),
             SizedBox(height: 30),
             Text("Add a bus stop"),
@@ -125,7 +142,7 @@ class _BusFormState extends State<BusForm> {
             ),
 
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 //Validates and verify all the form fields
                 if (_formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(
@@ -137,6 +154,7 @@ class _BusFormState extends State<BusForm> {
                       ),
                     ),
                   );
+                  Navigator.pop(context);
                 }
               },
               child: Text("Submit"),

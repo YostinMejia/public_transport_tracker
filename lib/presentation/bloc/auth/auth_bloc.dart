@@ -16,15 +16,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _authRepository = authRepository;
     on<StartAuthListen>(_startAuthSubscription);
     on<SignUpUser>(_signUpUser);
+    on<SignUpBus>(_signUpBus);
+    on<LogIn>(_signInEmailAndPassword);
   }
 
-  Future<void> signInAnonymously() {
+  Future<void> _signInAnonymously() {
     return _authRepository.signInAnonymously();
   }
 
+  void _signInEmailAndPassword(LogIn event, Emitter<AuthState> emit) async {
+    if (event.isAnonymous) {
+      await _signInAnonymously();
+      return;
+    }
+    await _authRepository.signInEmailAndPassword(event.email, event.password);
+  }
+
   //TODO: implement a custom claim to assing user rols
-  Future<String?> getUserRol(String? token) async {
-    return "user";
+  Future<Rol?> getUserRol(User user) async {
+    //FIXME: implement the logic to retrieve the user's rol
+    return Rol.bus;
   }
 
   void _startAuthSubscription(
@@ -40,40 +51,48 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         if (user.isAnonymous) {
-          emit(AnonymouslyAuthenticated(user: user));
+          emit(
+            Authenticated(user: user, rol: Rol.anonymous, isAnonymous: true),
+          );
           return;
         }
-        try {
-          String? token = await user.getIdToken();
-          String? userRol = await getUserRol(token);
-          if (userRol == null) {
-            emit(ErrorSignIn(error: "User not found"));
-            return;
-          }
-          if (userRol == "bus") {
-            emit(BusAuthenticated(bus: user));
-            return;
-          } else {
-            emit(UserAuthenticated(user: user));
-            return;
-          }
-        } catch (e) {
-          emit(ErrorSignIn(error: "Failed to retrieve user: ${e.toString()}"));
+
+        Rol? userRol = await getUserRol(user);
+
+        if (userRol == null) {
+          emit(SignInError(error: "User not found"));
+          return;
         }
+        emit(Authenticated(user: user, rol: userRol));
       },
       onError: (error, stackTrace) {
         emit(
-          ErrorSignIn(error: "Failed to retrieve user: ${error.toString()}"),
+          SignInError(error: "Failed to retrieve user: ${error.toString()}"),
         );
       },
     );
   }
 
+  //TODO: learn how to implement custom claims, to assign the diferent user's rol
   void _signUpUser(SignUpUser event, Emitter<AuthState> emit) async {
-    await _authRepository.createUserWithEmailAndPassword(
-      event.user.email,
-      event.user.email,
-    );
-    // await _authRepository.createUser(event.user, user.credential.toString());
+    try {
+      await _authRepository.createUserWithEmailAndPassword(
+        event.user.email,
+        event.user.password,
+      );
+    } catch (e) {
+      emit(SignUpError(error: e.toString()));
+    }
+  }
+
+  void _signUpBus(SignUpBus event, Emitter<AuthState> emit) async {
+    try {
+      await _authRepository.createUserWithEmailAndPassword(
+        event.bus.email,
+        event.bus.password,
+      );
+    } catch (e) {
+      emit(SignUpError(error: e.toString()));
+    }
   }
 }

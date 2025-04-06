@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:public_transport_tracker/data/datasources/firebase_auth_datasource.dart';
 
-//TODO: the models should be the latest repository implementing others respositories to
-// login, signup, and do any operation it needs
-
 class AuthRepository {
   final FirebaseAuthDatasource _firebaseAuthDatasource;
 
@@ -20,7 +17,7 @@ class AuthRepository {
     return _firebaseAuthDatasource.signInAnonymously();
   }
 
-   Future<void> signOut() {
+  Future<void> signOut() {
     return _firebaseAuthDatasource.signOut();
   }
 
@@ -34,4 +31,7 @@ class AuthRepository {
     );
   }
 
+  Future<UserCredential> signInEmailAndPassword(String email, String password) {
+    return _firebaseAuthDatasource.signInEmailAndPassword(email, password);
+  }
 }

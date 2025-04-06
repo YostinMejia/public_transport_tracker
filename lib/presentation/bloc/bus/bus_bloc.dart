@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 import 'package:public_transport_tracker/data/repositories/bus_repository.dart';
 import 'package:public_transport_tracker/domain/models/bus_model.dart';
@@ -24,15 +21,8 @@ class BusBloc extends Bloc<BusEvent, BusState> {
         emit(BusError(error: "Bus not found"));
         return;
       }
-      final Stream<Position> busLocationStream = _busRepository.locationStream();
-      final Position lastPosition = await _busRepository.actualLocation();
-      emit(
-        BusLoaded(
-          bus: bus,
-          busPositionStream: busLocationStream,
-          lastPosition: lastPosition,
-        ),
-      );
+
+      emit(BusLoaded(bus: bus));
     } catch (e) {
       emit(BusError(error: e.toString()));
     }

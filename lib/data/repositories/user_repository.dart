@@ -40,12 +40,10 @@ class UserRepository {
     );
   }
 
-  Future<UserModel?> getBusByEmail(String email) async {
+  Future<UserModel?> getUserByEmail(String email) async {
     QuerySnapshot<Map<String, dynamic>> response =
-        await _firebaseFirestoreDatasource.getBusByEmail(email);
-    if (response.docs.isNotEmpty) {
-      print(response.docs.first.data());
-    }
+        await _firebaseFirestoreDatasource.getUserByEmail(email);
+
     return response.docs.isNotEmpty
         ? UserModel.fromJson(response.docs.first.data())
         : null;

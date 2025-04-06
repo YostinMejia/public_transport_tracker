@@ -25,7 +25,14 @@ class FirebaseAuthDatasource {
     );
   }
 
-  //TODO: implement a custom claim to assing user rols
+  Future<UserCredential> signInEmailAndPassword(String email, String password) {
+    return FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  //FIXME: implement a custom claim to assing user rols
   String getRol() {
     return "user";
   }

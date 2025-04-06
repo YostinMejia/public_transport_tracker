@@ -14,11 +14,17 @@ class LoginScreen extends StatelessWidget {
           children: [
             Text("Login"),
 
-            TextButton.icon(onPressed: ()async{
-              await context.read<AuthBloc>().signInAnonymously();
-            }, label: Text("Sign in Anonymously"), icon: Icon(Icons.device_unknown),),
-      
             LoginForm(),
+
+            TextButton.icon(
+              onPressed: () async {
+                context.read<AuthBloc>().add(
+                  LogIn(email: "", password: "", isAnonymous: true),
+                );
+              },
+              label: Text("Sign in Anonymously"),
+              icon: Icon(Icons.device_unknown),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(
@@ -89,6 +95,12 @@ class _LoginFormState extends State<LoginForm> {
             ElevatedButton(
               onPressed: () {
                 _formKey.currentState!.validate();
+                context.read<AuthBloc>().add(
+                  LogIn(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  ),
+                );
               },
               child: const Text("Submit"),
             ),

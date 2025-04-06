@@ -13,17 +13,11 @@ class FineLocationDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "IF you want tto know the distance between you and the next stop. Click Settings and active the permission to fine location",
+                "If you want tto know the distance between you and the next stop. Click Settings and active the permission to fine location",
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Close"),
-                  ),
                   TextButton(
                     onPressed: () {
                       openAppSettings();
