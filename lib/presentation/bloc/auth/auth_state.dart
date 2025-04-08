@@ -21,6 +21,11 @@ final class SignInError extends AuthState {
   SignInError({required this.error});
 }
 
+final class SignUpCorrectly extends AuthState {
+  final UserCredential userCredential;
+  SignUpCorrectly({required this.userCredential});
+}
+
 
 final class SignUpError extends AuthState {
   final String error;

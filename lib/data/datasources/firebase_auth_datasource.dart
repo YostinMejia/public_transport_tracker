@@ -34,6 +34,6 @@ class FirebaseAuthDatasource {
 
   //FIXME: implement a custom claim to assing user rols
   String getRol() {
-    return "user";
+    return "bus";
   }
 }

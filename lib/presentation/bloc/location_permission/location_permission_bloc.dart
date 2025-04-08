@@ -35,25 +35,29 @@ class LocationBloc extends Bloc<LocationPermissionEvent, LocationState> {
     );
   }
 
-  void _requestPermission(LocationPermissionEvent event,Emitter<LocationState> emit,) async {
+  void _requestPermission(
+    LocationPermissionEvent event,
+    Emitter<LocationState> emit,
+  ) async {
     emit(LocationPermissionLoading());
     PermissionStatus permissionStatus =
         await _permissionHandlerRepository.locationPermission();
 
-    final Stream<Position> locationStream =
-        _locationRepository.locationStream();
-    final Position actualLocation = await _locationRepository.actualLocation();
-    if (permissionStatus.isGranted) {
-      emit(
-        FineLocationGranted(
-          locationStream: locationStream,
-          initialLocation: actualLocation,
-        ),
-      );
-    } else if (permissionStatus.isDenied) {
+    if (permissionStatus.isDenied) {
       emit(FineLocationDenied());
-    } else {
+      return;
+    } else if (permissionStatus.isPermanentlyDenied) {
       emit(FineLocationPermanentlyDenied());
+      return;
     }
+
+    final Stream<Position> locationStream = _locationRepository.locationStream();
+    final Position actualLocation = await _locationRepository.actualLocation();
+    emit(
+      FineLocationGranted(
+        locationStream: locationStream,
+        initialLocation: actualLocation,
+      ),
+    );
   }
 }

@@ -21,15 +21,6 @@ class _UserSignUpFormState extends State<UserSignUp> {
       TextEditingController();
 
   @override
-  void dispose() {
-    super.dispose();
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -97,5 +88,14 @@ class _UserSignUpFormState extends State<UserSignUp> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 }

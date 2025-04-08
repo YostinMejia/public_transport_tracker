@@ -31,10 +31,20 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, state) {
-        if (state is LocationPermissionLoading || state is LocationPermissionInitial) {
+        if (state is LocationPermissionLoading ||
+            state is LocationPermissionInitial) {
           return Scaffold(
             body: SafeArea(
-              child: Center(child: CircularProgressIndicator.adaptive()),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator.adaptive(),
+                    Text("Getting the location...."),
+                  ],
+                ),
+              ),
             ),
           );
         } else if (state is FineLocationGranted) {

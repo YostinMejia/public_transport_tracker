@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:public_transport_tracker/domain/models/bus_model.dart';
 import 'package:public_transport_tracker/domain/models/user_model.dart';
 
 class FirebaseFirestoreDatasource {
@@ -38,10 +39,10 @@ class FirebaseFirestoreDatasource {
   }
 
   Future<DocumentReference<Map<String, dynamic>>> createBus(
-    UserModel user,
+    BusSignUpDTO bus,
     String authId,
   ) {
-    Map<String, dynamic> json = user.toJson();
+    Map<String, dynamic> json = bus.toJson();
     json["authId"] = authId;
     return FirebaseFirestore.instance.collection("buses").add(json);
   }

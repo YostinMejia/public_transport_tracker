@@ -14,11 +14,11 @@ class BusModel {
 
   factory BusModel.fromJson(Map<String, dynamic> json) {
     Set<StopModel> stops =
-        (json["stops"] as List<Map<String, dynamic>>).map((stop) {
-          return StopModel.fromJson(stop);
+        (json["stops"] as List<dynamic>).map((stop) {
+          return StopModel.fromJson(stop as Map<String, dynamic>);
         }).toSet();
     return BusModel(
-      id: json["id"].toString(),
+      id: json["authId"].toString(),
       stops: stops,
       email: json["email"].toString(),
       password: json["password"].toString(),
@@ -44,4 +44,8 @@ class BusSignUpDTO {
     required this.password,
     required this.stops,
   });
+
+  Map<String, dynamic> toJson() {
+    return {"stops": stops, "email": email, "password": password};
+  }
 }
