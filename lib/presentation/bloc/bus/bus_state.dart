@@ -16,3 +16,7 @@ final class BusError extends BusState {
   final String error;
   BusError({required this.error});
 }
+
+
+class CreatingBus extends BusState {}
+class BusCreated extends BusState {}

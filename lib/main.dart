@@ -81,14 +81,12 @@ class _MainAppState extends State<MainApp> {
       ],
       child: MaterialApp(
         home: BlocBuilder<AuthBloc, AuthState>(
+          buildWhen:
+              (previous, current) =>
+                  current is Authenticated || current is UnAuthenticated,
           builder: (BuildContext context, AuthState state) {
             if (state is Authenticated) {
               return HomePage(email: state.user.email, rol: state.rol);
-            } else if (state is SignInError) {
-              //TODO: create a global error widget
-              return Scaffold(
-                body: Center(child: Text("Error: ${state.error}")),
-              );
             } else {
               return LoginScreen();
             }

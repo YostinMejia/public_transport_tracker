@@ -2,38 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
 import 'package:public_transport_tracker/presentation/screens/signup_screen.dart';
+import 'package:public_transport_tracker/presentation/validators/validators.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            Text("Login"),
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) => current is SignInError,
+      listener: (context, state) {
+        if (state is SignInError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${state.error}')));
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Column(
+            children: [
+              Text("Login"),
 
-            LoginForm(),
+              LoginForm(),
 
-            TextButton.icon(
-              onPressed: () async {
-                context.read<AuthBloc>().add(
-                  LogIn(email: "", password: "", isAnonymous: true),
-                );
-              },
-              label: Text("Sign in Anonymously"),
-              icon: Icon(Icons.device_unknown),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (context) => SignupScreen()));
-              },
-              child: Text("Don't you have an account? Create one"),
-            ),
-          ],
+              TextButton.icon(
+                onPressed: () async {
+                  context.read<AuthBloc>().add(
+                    LogIn(email: "", password: "", isAnonymous: true),
+                  );
+                },
+                label: Text("Sign in Anonymously"),
+                icon: Icon(Icons.device_unknown),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SignupScreen()),
+                  );
+                },
+                child: Text("Don't you have an account? Create one"),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -70,10 +81,10 @@ class _LoginFormState extends State<LoginForm> {
               ),
               controller: _emailController,
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
+                String? notEmpty = notNullOrEmpty(value);
+                if (notEmpty != null) return notEmpty;
+                String? email = emailValidator(value!);
+                return email;
               },
             ),
             SizedBox(height: 20),
@@ -84,23 +95,20 @@ class _LoginFormState extends State<LoginForm> {
                 label: Text("Password", style: TextStyle(fontSize: 30)),
               ),
               controller: _passwordController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
+              validator: notNullOrEmpty,
             ),
 
             ElevatedButton(
               onPressed: () {
-                _formKey.currentState!.validate();
-                context.read<AuthBloc>().add(
-                  LogIn(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  ),
-                );
+                if (_formKey.currentState!.validate()) {
+                  //TODO: handle when the user is not found
+                  context.read<AuthBloc>().add(
+                    LogIn(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ),
+                  );
+                }
               },
               child: const Text("Submit"),
             ),
@@ -112,8 +120,8 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 }

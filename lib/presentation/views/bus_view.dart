@@ -86,7 +86,6 @@ class _BusViewState extends State<BusView> {
                     actualPosition: widget.actualPosition,
                   ),
                   BusMapScreen(
-                    //FIXME: implement the logic to get the actual bus stops
                     stops: state.bus.stops,
                     initialPosition: widget.actualPosition,
                     busPositionStream: widget.positionStream,

@@ -87,10 +87,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _signUpBus(SignUpBus event, Emitter<AuthState> emit) async {
     try {
-      await _authRepository.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _authRepository.createUserWithEmailAndPassword(
         event.bus.email,
         event.bus.password,
       );
+
+      emit(SignUpCorrectly(userCredential: userCredential));
     } catch (e) {
       emit(SignUpError(error: e.toString()));
     }

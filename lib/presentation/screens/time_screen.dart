@@ -4,9 +4,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:public_transport_tracker/domain/models/stop_model.dart';
 import 'package:public_transport_tracker/presentation/widgets/bus_stop_information.dart';
 
-
-//FIXME: when the user log in for the first time as user this TimeScreen dont change to ConnectionState.active it keeps 
-// loading, because it is waiting for le location stream to emit data
 class TimeScreen extends StatefulWidget {
   final Set<StopModel> stops;
   final Stream<Position> positionStream;
@@ -32,7 +29,7 @@ class TimeScreen extends StatefulWidget {
 }
 
 class _TimeScreenState extends State<TimeScreen> {
-  //TODO: learn when a dispose method is called and how should I implement it usign streams
+  //TODO: learn how should I implement it usign streams
   @override
   void dispose() {
     super.dispose();
@@ -47,7 +44,7 @@ class _TimeScreenState extends State<TimeScreen> {
         if (snapshot.hasError) {
           return Center(child: Text("Error ${snapshot.error.toString()}"));
         }
-        if (snapshot.connectionState == ConnectionState.active) {
+        if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.done) {
           return ListView(
             children:
                 widget.stops.map((stop) {
