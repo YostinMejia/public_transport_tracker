@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:public_transport_tracker/features/user/domain/models/user_model.dart';
 
