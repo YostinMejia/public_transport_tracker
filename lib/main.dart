@@ -4,19 +4,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:public_transport_tracker/data/datasources/firebase_auth_datasource.dart';
-import 'package:public_transport_tracker/data/datasources/firebasefirestore_datasource.dart';
-import 'package:public_transport_tracker/data/datasources/geolocator_datasource.dart';
-import 'package:public_transport_tracker/data/repositories/auth_repository.dart';
-import 'package:public_transport_tracker/data/repositories/location_repository.dart';
-import 'package:public_transport_tracker/data/repositories/permission_handler_repository.dart';
+import 'package:public_transport_tracker/features/auth/data/datasources/firebase_auth_datasource.dart';
+import 'package:public_transport_tracker/features/bus/data/datasources/bus_remote_datasource.dart';
+import 'package:public_transport_tracker/features/location/data/datasources/geolocator_datasource.dart';
+import 'package:public_transport_tracker/features/auth/data/repositories/auth_repository.dart';
+import 'package:public_transport_tracker/features/location/data/repositories/location_repository.dart';
+import 'package:public_transport_tracker/features/location/data/repositories/permission_handler_repository.dart';
 import 'package:public_transport_tracker/firebase_options.dart';
-import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
-import 'package:public_transport_tracker/presentation/bloc/bus/bus_bloc.dart';
-import 'package:public_transport_tracker/presentation/bloc/location_permission/location_permission_bloc.dart';
+import 'package:public_transport_tracker/features/auth/bloc/auth/auth_bloc.dart';
+import 'package:public_transport_tracker/features/bus/bloc/bus/bus_bloc.dart';
+import 'package:public_transport_tracker/features/location/bloc/location_permission/location_permission_bloc.dart';
 import 'package:public_transport_tracker/home.dart';
-import 'package:public_transport_tracker/presentation/screens/login_screen.dart';
-import 'data/repositories/bus_repository.dart';
+import 'package:public_transport_tracker/features/auth/presentation/login_screen.dart';
+import 'features/bus/data/repositories/bus_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +66,7 @@ class _MainAppState extends State<MainApp> {
           create:
               (_) => BusBloc(
                 BusRepository(
-                  firebaseFirestoreDatasource: FirebaseFirestoreDatasource(),
+                  busRemoteDatasource: BusRemoteDatasource(),
                   locationRepository: LocationRepository(
                     geolocatorDatasource: GeolocatorDatasource(
                       LocationSettings(
