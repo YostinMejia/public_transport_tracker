@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:public_transport_tracker/presentation/bloc/auth/auth_bloc.dart';
-import 'package:public_transport_tracker/presentation/bloc/location_permission/location_permission_bloc.dart';
-import 'package:public_transport_tracker/presentation/views/bus_view.dart';
-import 'package:public_transport_tracker/presentation/views/user_view.dart';
-import 'package:public_transport_tracker/presentation/widgets/fine_location_dialog.dart';
+import 'package:public_transport_tracker/features/auth/bloc/auth/auth_bloc.dart';
+import 'package:public_transport_tracker/features/location/bloc/location_permission/location_permission_bloc.dart';
+import 'package:public_transport_tracker/features/bus/presentation/bus_view.dart';
+import 'package:public_transport_tracker/features/user/presentation/user_view.dart';
+import 'package:public_transport_tracker/features/location/presentation/fine_location_dialog.dart';
 
 class HomePage extends StatefulWidget {
   final Rol rol;
